@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, send_file
-from docx import Document
+from docxtpl import DocxTemplate
 from datetime import datetime
 import os
 
@@ -21,22 +21,22 @@ def generate_certificate():
         he_she, him_her = pronouns.get(gender, ("they", "them"))
         issued_date = datetime.today().strftime('%B %d, %Y')
 
-        # Ensure 'static' folder exists
         if not os.path.exists('static'):
             os.makedirs('static')
 
-        doc = Document(TEMPLATE_PATH)
-        for para in doc.paragraphs:
-            para.text = para.text.replace("{{Name}}", name)
-            para.text = para.text.replace("{{Domain}}", domain)
-            para.text = para.text.replace("{{Start Date}}", start_date)
-            para.text = para.text.replace("{{End Date}}", end_date)
-            para.text = para.text.replace("{{he/she/they}}", he_she)
-            para.text = para.text.replace("{{him/her/them}}", him_her)
-            if "ISSUED DATE :" in para.text:
-                para.text = para.text.replace("ISSUED DATE :", f"ISSUED DATE : {issued_date}")
-
+        doc = DocxTemplate(TEMPLATE_PATH)
+        context = {
+            "Name": name,
+            "Domain": domain,
+            "Start Date": start_date,
+            "End Date": end_date,
+            "he/she/they": he_she,
+            "him/her/them": him_her,
+            "issued_date": issued_date
+        }
+        doc.render(context)
         doc.save(OUTPUT_DOCX)
+
         return send_file(OUTPUT_DOCX, as_attachment=True)
 
     return render_template('form.html')
