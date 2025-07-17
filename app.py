@@ -21,6 +21,10 @@ def generate_certificate():
         he_she, him_her = pronouns.get(gender, ("they", "them"))
         issued_date = datetime.today().strftime('%B %d, %Y')
 
+        # Ensure 'static' folder exists
+        if not os.path.exists('static'):
+            os.makedirs('static')
+
         doc = Document(TEMPLATE_PATH)
         for para in doc.paragraphs:
             para.text = para.text.replace("{{Name}}", name)
