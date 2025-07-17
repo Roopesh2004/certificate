@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: cert-generator
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: cert-data
+      mountPath: /app/static
+      sizeGB: 1
