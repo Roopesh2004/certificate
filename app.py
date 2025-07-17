@@ -8,7 +8,11 @@ app = Flask(__name__)
 TEMPLATE_PATH = "SpectoV_Cert.docx"
 OUTPUT_DOCX = "static/Final_Certificate.docx"
 
-pronouns = {"male": ("he", "him"), "female": ("she", "her"), "other": ("they", "them")}
+pronouns = {
+    "male": ("he", "him"),
+    "female": ("she", "her"),
+    "other": ("they", "them")
+}
 
 @app.route('/', methods=['GET', 'POST'])
 def generate_certificate():
@@ -21,17 +25,19 @@ def generate_certificate():
         he_she, him_her = pronouns.get(gender, ("they", "them"))
         issued_date = datetime.today().strftime('%B %d, %Y')
 
+        # Ensure 'static' directory exists
         if not os.path.exists('static'):
             os.makedirs('static')
 
+        # Load template and render
         doc = DocxTemplate(TEMPLATE_PATH)
         context = {
-            "Name": name,
-            "Domain": domain,
-            "Start Date": start_date,
-            "End Date": end_date,
-            "he/she/they": he_she,
-            "him/her/them": him_her,
+            "name": name,
+            "domain": domain,
+            "start_date": start_date,
+            "end_date": end_date,
+            "he_she_they": he_she,
+            "him_her_them": him_her,
             "issued_date": issued_date
         }
         doc.render(context)
